@@ -98,7 +98,7 @@ public class Huffman {
     /**Fonction qui creer les feuilles à partir des Tuples (tree)
      * @return TreeSet:
      */
-    private TreeSet<Noeud> creactionFeuille() {
+    private TreeSet<Noeud> creationFeuille() {
         TreeSet<Noeud> noeuds = new TreeSet<Noeud>();
         for (Tuple t : this.tree) {
             noeuds.add(new Noeud(t, null, null, t.getFrequence()));
@@ -109,12 +109,11 @@ public class Huffman {
     /**Creaction de l'arbre avec des Listes Triées car on peut avoir des doublons.
      * @return
      */
-    private ArrayList<Noeud> creactionArbre() {
-        TreeSet<Noeud> arbres = this.creactionFeuille();
+    private ArrayList<Noeud> creationArbre() {
+        TreeSet<Noeud> arbres = this.creationFeuille();
         ArrayList<Noeud> arbresList = new ArrayList<Noeud>(arbres);
 
         while (arbresList.size() != 1) {
-            System.out.println(arbresList);
             arbresList.add(new Noeud(null, arbresList.get(0), arbresList.get(1), arbresList.get(0).getFrequence() + arbresList.get(1).getFrequence()));
             arbresList.remove(arbresList.get(0));
             arbresList.remove(arbresList.get(0));
@@ -128,70 +127,50 @@ public class Huffman {
     /**Creaction du fichier bin avec l'arbre de Huffman
      * @throws IOException: gestion d'erreur de ouverture/ ecriture des fichiers
      */
-    public void creactionFichierCompresse() throws IOException {
+    public void creationFichierCompresse() throws IOException {
 
-        this.creactionFichierTxt();
+        this.creationFichierTxt();
         Hashtable<Character,String> dicoCodage= new Hashtable<Character, String>();
-        this.racine= this.creactionArbre().get(0);
+        this.racine= this.creationArbre().get(0);
         dicoCodage= racine.parcoursProfondeur("",dicoCodage);
-        DataOutputStream  ecriture = null;
+        BufferedOutputStream  ecriture = null;
         BufferedReader lecture = null;
         String ligne;
         try {
             File inputFile = new File("data/compresser/"+this.fichier.substring(0,this.fichier.length()-4)+"_comb.bin");
             FileOutputStream  fileEcriture = new  FileOutputStream(inputFile);
             BufferedOutputStream bufferedEcriture = new BufferedOutputStream(fileEcriture);
-            ecriture= new DataOutputStream(bufferedEcriture);
+            ecriture= new BufferedOutputStream(bufferedEcriture);
             lecture = new BufferedReader(new FileReader("data/"+this.fichier));
         } catch (FileNotFoundException exc) {
             System.out.println("Erreur d'écriture du fichier : ".concat(this.fichier));
         }
         assert lecture != null;
-        String codage8bits = "";
+        String codageFin = "";
+        String codageDico="";
         String codage="";
+        Character letter ;
         while ((ligne = lecture.readLine()) != null) {
 
             for (int i = 0; i < ligne.length(); i++) {
-                Character letter = ligne.charAt(i);
-                codage = dicoCodage.get(letter);
-                this.bitsHuffman+=codage.length();// compteur pour calculer le nombre moyen de bit
-
-                while (codage.length()>8) {//decoupe du code par paquet de 8 bits
-                    codage8bits = codage8bits + codage.substring(0, 8 - codage8bits.length());
-                    codage=codage.substring(0, 8 - codage8bits.length());
-                    ecriture.writeByte((byte) Integer.parseInt(codage8bits));
-                    if(codage8bits.length() + codage.length() < 8){
-                        codage8bits = codage.substring(8 - codage8bits.length(), codage.length());
-                    }
-                }
-
-                if (codage8bits.length() + codage.length() < 8) {
-                    codage8bits = codage8bits + codage;
-
-                } else {
-
-                    codage8bits = codage8bits + codage.substring(0, 8 - codage8bits.length());
-                    ecriture.writeByte((byte) Integer.parseInt(codage8bits));
-                    codage8bits = codage.substring(8 - codage8bits.length(), codage.length());
-                    ;
-
-                }
-            }
-
-            // traitement a part des sauts de lignes
-            Character sautLine = System.getProperty("line.separator").charAt(0);
-            codage = dicoCodage.get(sautLine);
-            this.bitsHuffman+=codage.length();
-            if (codage8bits.length() + codage.length() < 8) {
-                codage8bits = codage8bits + codage;
-
-            } else {
-
-                codage8bits = codage8bits + codage.substring(0, 8 - codage8bits.length());
-                ecriture.writeByte((byte) Integer.parseInt(codage8bits));
-                codage8bits = codage.substring(8 - codage8bits.length(), codage.length());
+                letter = ligne.charAt(i);
+                codageDico=dicoCodage.get(letter);
+                codage += codageDico;
+                this.bitsHuffman += codageDico.length();// compteur pour calculer le nombre moyen de bit
             }
         }
+        for(int index = 0; index < codage.length();index+=8){
+            try{
+                ecriture.write((byte) Integer.parseInt(codage.substring(index,index+8)));
+            }
+            catch (Exception e){
+                for(int i=0; i<codage.length()-index;i++){
+                    codageFin+="0";
+                }
+                ecriture.write((byte) Integer.parseInt(codage.substring(index,codage.length())+codageFin));
+            }
+        }
+
         /* Fermeture des fichiers */
         ecriture.close();
         lecture.close();
@@ -204,7 +183,7 @@ public class Huffman {
     /** Creaction du fichier txt contenant les occurences et l'alphabet de fichier original
      * @throws IOException: gestion d'erreur d'ecriture du fichier
      */
-    private void creactionFichierTxt() throws IOException{
+    private void creationFichierTxt() throws IOException{
 
         BufferedWriter buffer = null;
         try {
@@ -228,16 +207,16 @@ public class Huffman {
         }
     }
 
-    /**
-     * @return
+    /**Mèthode qui calcul
+     * @return float moyenne de bit
      */
     private float nombreMoyen(){
         float moyenne =(float) bitsHuffman / racine.getFrequence();
-        System.out.println("Le nombre moyen de bits est de : "+String.valueOf(bitsHuffman));
+        System.out.println("Le nombre moyen de bits est de : "+String.valueOf(moyenne));
         return moyenne;
     }
 
-    /**  Méthode qui calcule le taux de compression
+    /**  Méthode qui calcul le taux de compression
      * @return: float qui est ce taux et Affichage
      */
     private float tauxCompression(){

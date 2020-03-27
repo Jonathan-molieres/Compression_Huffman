@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class Noeud implements Comparable<Object> {
-    /**
+    /**Explication variable
      * t : tuple contenant la lettre
      * droite : Noeud droite de l'arbre
      * gauche : Noeud gauche de l'arbre
@@ -31,7 +31,7 @@ public class Noeud implements Comparable<Object> {
     public Noeud getGauche() {
         return gauche;
     }
-
+    /* affichage  recursive pour visualiser l'arbre*/
     public String toString() {
         if(t!=null && t.getLettre()!=System.getProperty("line.separator").charAt(0))
         {

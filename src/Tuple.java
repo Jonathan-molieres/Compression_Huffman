@@ -54,4 +54,3 @@ public class Tuple implements Comparable<Object> {
     }
 
 }
-
