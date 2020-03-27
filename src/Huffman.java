@@ -170,12 +170,11 @@ public class Huffman {
                 ecriture.write((byte) Integer.parseInt(codage.substring(index,codage.length())+codageFin));
             }
         }
-
         /* Fermeture des fichiers */
         ecriture.close();
         lecture.close();
         System.out.println("*******************Compression Terminée*******************");
-        //calcule des performance
+        //calcule des performances
         this.nombreMoyen();
         this.tauxCompression();
     }
@@ -227,39 +226,6 @@ public class Huffman {
         System.out.println("Le taux de compression est de : "+String.valueOf(taux)+" %");
         return taux;
     }
-
-    private void decompression(){
-
-    }
-
-    public void recuperationFrequence() throws IOException {
-        BufferedReader lecture = null;
-        String ligne;
-        try {
-            lecture = new BufferedReader(new FileReader("data/compresser/" + this.fichier.substring(0, this.fichier.length() - 4) + "_freq.txt"));
-        } catch (FileNotFoundException exc) {
-            System.out.println("Erreur d'ouverture du fichier : ".concat(this.fichier));
-        }
-        while ((ligne = lecture.readLine()) != null) {
-            String[] ligneTableau = ligne.split(" ");
-            try {
-                if (ligneTableau.length == 2) {
-                    System.out.println(ligneTableau[0]);
-                    if (ligneTableau[0] != "[saut_ligne]") {
-                        System.out.println(ligneTableau[0].charAt(0));
-                        System.out.println(ligneTableau[1]);
-                        Tuple tuple=new Tuple(ligneTableau[0].charAt(0), Integer.parseInt(ligneTableau[1]));
-                        treeDecompression.add(new Tuple(ligneTableau[0].charAt(0), Integer.parseInt(ligneTableau[1])));
-                    } else {
-
-                        treeDecompression.add(new Tuple(System.getProperty("line.separator").charAt(0), Integer.parseInt(ligneTableau[1])));
-                    }
-                }
-            } catch (Exception  e) {
-            }
-        }
-
-
-    }
+    
     
 }

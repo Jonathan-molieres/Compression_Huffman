@@ -13,7 +13,7 @@ public class Main {
         //huffman.recuperationFrequence();
         long fin = System.currentTimeMillis();
 
-        System.out.println("Temps d'execution : " +String.valueOf((float)(fin-debut)/1000)+" secondes");
+        System.out.println("Temps d'exécution : " +String.valueOf((float)(fin-debut)/1000)+" secondes");
 
     }
 }
