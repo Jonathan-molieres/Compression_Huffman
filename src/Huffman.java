@@ -80,8 +80,8 @@ public class Huffman {
                 }
                 else {
                     tree.add(new Tuple(letter, 1));
-                    }
                 }
+            }
 
             Character sautLine =System.getProperty("line.separator").charAt(0);
             if (this.containsKey(sautLine)) {
@@ -158,18 +158,17 @@ public class Huffman {
                 codage += codageDico;
                 this.bitsHuffman += codageDico.length();// compteur pour calculer le nombre moyen de bit
             }
-        }
-        for(int index = 0; index < codage.length();index+=8){
-            try{
-                ecriture.write((byte) Integer.parseInt(codage.substring(index,index+8)));
-            }
-            catch (Exception e){
-                for(int i=0; i<codage.length()-index;i++){
-                    codageFin+="0";
-                }
-                ecriture.write((byte) Integer.parseInt(codage.substring(index,codage.length())+codageFin));
+
+        while(codage.length()>8) {
+            ecriture.write((byte) Integer.parseInt(codage.substring(0, 8)));
+            codage=codage.substring(8,codage.length());
             }
         }
+        for(int i=0; i<8-codage.length();i++){
+            codageFin+="0";
+        }
+        ecriture.write((byte) Integer.parseInt(codage.substring(0,codage.length())+codageFin));
+
         /* Fermeture des fichiers */
         ecriture.close();
         lecture.close();
@@ -226,6 +225,6 @@ public class Huffman {
         System.out.println("Le taux de compression est de : "+String.valueOf(taux)+" %");
         return taux;
     }
-    
-    
+
+
 }

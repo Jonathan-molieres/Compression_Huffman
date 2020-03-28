@@ -6,7 +6,7 @@ public class Main {
         long debut = System.currentTimeMillis();
         Hashtable<Character,String> dico= new Hashtable<Character, String>();
         System.out.println("*************Début de la compression**************");
-        Huffman huffman = new Huffman("alice.txt");
+        Huffman huffman = new Huffman("aliceMultiple.txt");
         System.out.println("Liste des fréquences des différents lettres de l'alphabet de Huffman :");
         System.out.println(huffman.lire());
         huffman.creationFichierCompresse();
@@ -14,6 +14,5 @@ public class Main {
         long fin = System.currentTimeMillis();
 
         System.out.println("Temps d'exécution : " +String.valueOf((float)(fin-debut)/1000)+" secondes");
-
     }
 }

@@ -1,6 +1,9 @@
-/** Class Tuple  */
+
 public class Tuple implements Comparable<Object> {
 
+    /**
+     * lettre: lettre de l'alphabet de 
+     */
     private char lettre;
     private Integer frequence;
 
